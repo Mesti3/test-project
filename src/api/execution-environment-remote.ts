@@ -14,7 +14,7 @@ export const ExecutionEnvironmentRemoteAPI = {
 
   sync: (name) =>
     base.http.post(
-      `v3/plugin/execution-environments/repositories/${name}/_content/sync/`,
+      `repositories/container/container/${encodeURIComponent(name)}/_content/sync/`,
       {},
     ),
 

@@ -6,7 +6,7 @@ const base = new PulpAPI();
 export const ActivitiesAPI = {
   listRepo: (id, params?) =>
     base.list(
-      `v3/plugin/execution-environments/repositories/${id}/_content/history/`,
+      `repositories/container/container/${encodeURIComponent(id)}/_content/history/`,
       params,
     ),
 };
