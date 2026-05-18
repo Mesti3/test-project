@@ -29,6 +29,7 @@ import {
   ExecutionEnvironmentList,
   ExecutionEnvironmentManifest,
   ExecutionEnvironmentRegistryList,
+  ContainerDashboard,
   FileRemoteDetail,
   FileRemoteEdit,
   FileRemoteList,
@@ -55,6 +56,7 @@ import {
   UserDetail,
   UserList,
   UserProfile,
+  DomainList,
 } from 'src/containers';
 import { Paths, formatPath } from 'src/paths';
 import { config } from 'src/ui-config';
@@ -95,6 +97,11 @@ const routes: IRouteConfig[] = [
     beta: true,
   },
   {
+    component: ContainerDashboard,
+    path: Paths.container.dashboard,
+    beta: true,
+  },
+  {
     component: ExecutionEnvironmentList,
     path: Paths.container.repository.list,
     beta: true,
@@ -121,6 +128,11 @@ const routes: IRouteConfig[] = [
   {
     component: TaskDetail,
     path: Paths.core.task.detail,
+  },
+  {
+    component: DomainList,
+    path: Paths.core.domain.list,
+    beta: true,
   },
   {
     component: EditRole,

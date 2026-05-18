@@ -55,50 +55,39 @@ function standaloneMenu() {
       url: formatPath(Paths.meta.search),
       condition: and(BROKEN, loggedIn),
     }),
-    menuSection(
-      'Pulp Ansible',
-      { condition: and(loggedIn, hasPlugin('ansible')) },
-      [
-        menuItem(t`Collections`, {
-          url: formatPath(Paths.ansible.collection.list),
-          alternativeUrls: [altPath('/repo/:repo')],
-          condition: BROKEN,
-        }),
-        menuItem(t`Namespaces`, {
-          url: formatPath(Paths.ansible.namespace.list),
-          alternativeUrls: [altPath(Paths.ansible.namespace.mine)],
-          condition: BROKEN,
-        }),
-        menuItem(t`Repositories`, {
-          url: formatPath(Paths.ansible.repository.list),
-        }),
-        menuItem(t`Remotes`, {
-          url: formatPath(Paths.ansible.remote.list),
-        }),
-        menuItem(t`Approvals`, {
-          url: formatPath(Paths.ansible.approvals),
-          condition: BROKEN,
-        }),
-        menuItem(t`Imports`, {
-          url: formatPath(Paths.ansible.imports),
-          condition: BROKEN,
-        }),
-      ],
-    ),
-    menuSection(
-      'Pulp container',
-      { condition: and(loggedIn, hasPlugin('container')) },
-      [
-        menuItem(t`Containers`, {
-          url: formatPath(Paths.container.repository.list),
-          condition: BROKEN,
-        }),
-        menuItem(t`Remote registries`, {
-          url: formatPath(Paths.container.remote.list),
-          condition: BROKEN,
-        }),
-      ],
-    ),
+    menuSection('Pulp Ansible', { condition: loggedIn }, [
+      menuItem(t`Collections`, {
+        url: formatPath(Paths.ansible.collection.list),
+        alternativeUrls: [altPath('/repo/:repo')],
+      }),
+      menuItem(t`Namespaces`, {
+        url: formatPath(Paths.ansible.namespace.list),
+        alternativeUrls: [altPath(Paths.ansible.namespace.mine)],
+      }),
+      menuItem(t`Repositories`, {
+        url: formatPath(Paths.ansible.repository.list),
+      }),
+      menuItem(t`Remotes`, {
+        url: formatPath(Paths.ansible.remote.list),
+      }),
+      menuItem(t`Approvals`, {
+        url: formatPath(Paths.ansible.approvals),
+      }),
+      menuItem(t`Imports`, {
+        url: formatPath(Paths.ansible.imports),
+      }),
+    ]),
+    menuSection('Pulp container', { condition: loggedIn }, [
+      menuItem(t`Image dashboard`, {
+        url: formatPath(Paths.container.dashboard),
+      }),
+      menuItem(t`Docker containers`, {
+        url: formatPath(Paths.container.repository.list),
+      }),
+      menuItem(t`Remote registries`, {
+        url: formatPath(Paths.container.remote.list),
+      }),
+    ]),
     menuSection('Pulp file', { condition: and(loggedIn, hasPlugin('file')) }, [
       menuItem(t`Repositories`, {
         url: formatPath(Paths.file.repository.list),
@@ -115,6 +104,10 @@ function standaloneMenu() {
     menuItem(t`Task management`, {
       url: formatPath(Paths.core.task.list),
       alternativeUrls: [altPath(Paths.core.task.detail)],
+      condition: loggedIn,
+    }),
+    menuItem(t`Domains`, {
+      url: formatPath(Paths.core.domain.list),
       condition: loggedIn,
     }),
     menuItem(t`Signature keys`, {

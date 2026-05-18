@@ -3,6 +3,7 @@ import { Trans } from '@lingui/react/macro';
 import {
   Button,
   Checkbox,
+  Modal,
   Text,
   Toolbar,
   ToolbarContent,
@@ -20,6 +21,7 @@ import { type ContainerManifestType, ExecutionEnvironmentAPI } from 'src/api';
 import { AppContext, type IAppContextType } from 'src/app-context';
 import {
   AppliedFilters,
+  ClipboardCopy,
   CompoundFilter,
   CopyURL,
   DateComponent,
@@ -55,18 +57,21 @@ import './execution-environment-detail.scss';
 
 interface IState {
   loading: boolean;
-  images: ContainerManifestType[];
+  images: Array<ContainerManifestType & { size: number; isManifestList: boolean }>;
   numberOfImages: number;
   params: { page?: number; page_size?: number; sort?: string };
-  redirect: string;
+  redirect: string | null;
   inputText: string;
 
   // ID for manifest that is open in the manage tags modal.
   manageTagsManifestDigest: string;
-  selectedImage: ContainerManifestType;
+  selectedImage: ContainerManifestType | null;
+  metadataImage: ContainerManifestType | null;
+  metadataModalVisible: boolean;
+  metadataLoading: boolean;
   deleteModalVisible: boolean;
   confirmDelete: boolean;
-  expandedImage?: ContainerManifestType;
+  expandedImage: ContainerManifestType | null;
   isDeletionPending: boolean;
 }
 
@@ -98,7 +103,10 @@ class ExecutionEnvironmentDetailImages extends Component<
       params,
       redirect: null,
       manageTagsManifestDigest: undefined,
-      selectedImage: undefined,
+      selectedImage: null,
+      metadataImage: null,
+      metadataModalVisible: false,
+      metadataLoading: false,
       deleteModalVisible: false,
       confirmDelete: false,
       expandedImage: null,
@@ -174,6 +182,11 @@ class ExecutionEnvironmentDetailImages extends Component<
           id: 'digest',
         },
         {
+          title: t`Metadata`,
+          type: 'none',
+          id: 'metadata',
+        },
+        {
           title: '',
           type: 'none',
           id: 'instructions',
@@ -238,6 +251,7 @@ class ExecutionEnvironmentDetailImages extends Component<
           onAlert={(alert) => this.props.addAlert(alert)}
           containerRepository={this.props.containerRepository}
         />
+        {this.state.metadataModalVisible && this.renderMetadataModal()}
 
         <div className='pulp-toolbar'>
           <Toolbar>
@@ -368,6 +382,12 @@ class ExecutionEnvironmentDetailImages extends Component<
     const { expandedImage } = this.state;
 
     const dropdownItems = [
+      <DropdownItem
+        key='view-metadata'
+        onClick={() => this.openMetadataModal(image)}
+      >
+        {t`View metadata`}
+      </DropdownItem>,
       canEditTags && !isRemote && (
         <DropdownItem
           key='edit-tags'
@@ -435,6 +455,14 @@ class ExecutionEnvironmentDetailImages extends Component<
             ) : (
               <ShaLink digest={image.digest} />
             )}
+          </Td>
+          <Td>
+            <Button
+              variant='link'
+              onClick={() => this.openMetadataModal(image)}
+            >
+              {t`View`}
+            </Button>
           </Td>
           <Td>
             <CopyURL url={instructions} />
@@ -546,6 +574,9 @@ class ExecutionEnvironmentDetailImages extends Component<
 
   private deleteImage() {
     const { selectedImage } = this.state;
+    if (!selectedImage) {
+      return;
+    }
     const { digest } = selectedImage;
     this.setState({ isDeletionPending: true }, () =>
       ExecutionEnvironmentAPI.deleteImage(
@@ -584,6 +615,55 @@ class ExecutionEnvironmentDetailImages extends Component<
             description: jsxErrorMessage(status, statusText),
           });
         }),
+    );
+  }
+
+  private openMetadataModal(image) {
+    this.setState(
+      {
+        metadataModalVisible: true,
+        metadataLoading: true,
+        metadataImage: null,
+      },
+      () =>
+        ExecutionEnvironmentAPI.image(
+          containerName(this.props.routeParams),
+          image.digest,
+        )
+          .then(({ data }) =>
+            this.setState({ metadataImage: data, metadataLoading: false }),
+          )
+          .catch((err) => {
+            const { status, statusText } = err.response || {};
+            this.setState({ metadataModalVisible: false, metadataLoading: false });
+            this.props.addAlert({
+              variant: 'danger',
+              title: t`Image metadata could not be loaded.`,
+              description: jsxErrorMessage(status, statusText),
+            });
+          }),
+    );
+  }
+
+  private renderMetadataModal() {
+    const { metadataImage, metadataLoading } = this.state;
+    return (
+      <Modal
+        title={t`Image metadata`}
+        isOpen={this.state.metadataModalVisible}
+        onClose={() =>
+          this.setState({ metadataModalVisible: false, metadataImage: null })
+        }
+        variant='large'
+      >
+        {metadataLoading ? (
+          <LoadingSpinner />
+        ) : (
+          <ClipboardCopy isCode isReadOnly isExpanded>
+            {JSON.stringify(metadataImage, null, 2)}
+          </ClipboardCopy>
+        )}
+      </Modal>
     );
   }
 

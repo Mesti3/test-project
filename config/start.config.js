@@ -1,6 +1,6 @@
 const webpackBase = require('./shared.config');
 
-const proxyTarget = process.env.API_PROXY || 'http://localhost:8080';
+const proxyTarget = process.env.API_PROXY || 'http://localhost:8082';
 
 module.exports = webpackBase({
   // Port that the UI is served over.

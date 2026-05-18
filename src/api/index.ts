@@ -34,6 +34,7 @@ export {
 export { getCancelToken } from './get-cancel-token';
 export { GroupAPI } from './group';
 export { GroupRoleAPI } from './group-role';
+export { DomainAPI } from './domain';
 export { ImportAPI } from './import';
 export { NamespaceAPI } from './namespace';
 export { OrphanCleanupAPI } from './orphan-cleanup';

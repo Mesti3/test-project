@@ -27,6 +27,7 @@ import {
   SmallLogo,
   StatefulDropdown,
 } from 'src/components';
+import { config } from 'src/ui-config';
 import { PulpMenu } from './menu';
 import { Paths, formatPath } from './paths';
 import { useUserContext } from './user-context';
@@ -51,6 +52,28 @@ const DocsDropdown = ({ showAbout }: { showAbout: () => void }) => (
       </DropdownItem>,
     ]}
     toggleType='icon'
+  />
+);
+
+const EnvDropdown = ({
+  currentEnv,
+  onSelect,
+}: {
+  currentEnv: string;
+  onSelect: (env: string) => void;
+}) => (
+  <StatefulDropdown
+    ariaLabel={t`Environment selector`}
+    data-cy='env-dropdown'
+    defaultText={currentEnv}
+    items={Object.keys(config.API_BASE_PATHS || {}).map((env) => (
+      <DropdownItem key={env} value={env}>
+        {env}
+      </DropdownItem>
+    ))}
+    onSelect={(event) => onSelect(event.currentTarget.value)}
+    toggleType='dropdown'
+    isPlain={false}
   />
 );
 
@@ -86,6 +109,7 @@ const UserDropdown = ({
 
 export const Layout = ({ children }: { children: ReactNode }) => {
   const [aboutModalVisible, setAboutModalVisible] = useState<boolean>(false);
+  const [currentEnv, setCurrentEnv] = useState<string>(config.API_ENV || 'staging');
   const { credentials, clearCredentials } = useUserContext();
 
   const username = credentials?.username;
@@ -115,6 +139,27 @@ export const Layout = ({ children }: { children: ReactNode }) => {
         <span style={{ flexGrow: 1 }} />
         <DarkmodeSwitcher />
         <LanguageSwitcher />
+        {config.API_BASE_PATHS ? (
+          <EnvDropdown
+            currentEnv={currentEnv}
+            onSelect={(env) => {
+              if (env !== currentEnv) {
+                const apiBasePaths = config.API_BASE_PATHS || {};
+                if (apiBasePaths[env]) {
+                  config.API_ENV = env;
+                  config.API_BASE_PATH = apiBasePaths[env];
+                  const params = new URLSearchParams(window.location.search);
+                  params.set('api_env', env);
+                  const newUrl =
+                    window.location.pathname +
+                    (params.toString() ? `?${params.toString()}` : '');
+                  window.history.replaceState(null, '', newUrl);
+                  setCurrentEnv(env);
+                }
+              }
+            }}
+          />
+        ) : null}
         <DocsDropdown showAbout={() => setAboutModalVisible(true)} />
         {credentials ? (
           <UserDropdown username={username} logout={() => clearCredentials()} />

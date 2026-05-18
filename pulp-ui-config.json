@@ -1,5 +1,9 @@
 {
-  "API_BASE_PATH": "/pulp/api/v3/",
+  "API_BASE_PATH": {
+    "staging": "/pulp/staging/api/v3/",
+    "production": "/pulp/production/api/v3/"
+  },
+  "API_ENV": "staging",
   "UI_BASE_PATH": "/ui/",
   "UI_EXTERNAL_LOGIN_URI": null,
   "EXTRA_VERSION": ""

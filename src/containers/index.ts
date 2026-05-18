@@ -18,6 +18,7 @@ export { default as ExecutionEnvironmentDetailAccess } from './execution-environ
 export { default as ExecutionEnvironmentDetailActivities } from './execution-environment-detail/execution-environment-detail-activities';
 export { default as ExecutionEnvironmentDetailImages } from './execution-environment-detail/execution-environment-detail-images';
 export { default as ExecutionEnvironmentList } from './execution-environment-list/execution-environment-list';
+export { default as ContainerDashboard } from './execution-environment-dashboard';
 export { default as ExecutionEnvironmentManifest } from './execution-environment-manifest/execution-environment-manifest';
 export { default as ExecutionEnvironmentRegistryList } from './execution-environment/registry-list';
 export { default as FileRemoteDetail } from './file-remote/detail';
@@ -34,6 +35,7 @@ export { default as NamespaceDetail } from './namespace-detail/namespace-detail'
 export { default as MyNamespaces } from './namespace-list/my-namespaces';
 export { default as Partners } from './namespace-list/partners';
 export { default as PulpStatus } from './pulp-status';
+export { default as DomainList } from './domain-list';
 export { default as RoleCreate } from './role-management/role-create';
 export { default as EditRole } from './role-management/role-edit';
 export { default as RoleList } from './role-management/role-list';

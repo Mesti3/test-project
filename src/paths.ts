@@ -88,6 +88,7 @@ export const Paths = {
     },
   },
   container: {
+    dashboard: '/container/dashboard',
     remote: { list: '/container/remotes' },
     repository: {
       access: '/container/containers/access/:namespace?/:container',
@@ -113,6 +114,9 @@ export const Paths = {
     task: {
       detail: '/tasks/detail/:task',
       list: '/tasks',
+    },
+    domain: {
+      list: '/domains',
     },
     user: {
       create: '/users/create',
