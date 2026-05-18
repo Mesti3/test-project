@@ -2,7 +2,7 @@ version: '3.9'
 services:
   pulp-ui:
     build:
-      context: ./pulp-ui-react
+      context: .
       dockerfile: Dockerfile.prod
     container_name: pulp_ui_prod
     restart: unless-stopped
